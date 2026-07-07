@@ -139,7 +139,7 @@ export default function PlayerCard({ player, stats, showDownload = false, compac
       )}
 
       {/* Player ID */}
-      <div className="text-white/20 text-xs font-mono">{player.player_code}</div>
+      <div className="text-white/20 text-xs font-mono">{player.player_code ?? ''}</div>
     </div>
   )
 }

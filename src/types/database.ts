@@ -18,6 +18,7 @@ export interface Profile {
 export interface Player {
   id: string
   profile_id?: string          // linked if the player has their own account
+  player_code?: string
   full_name: string
   date_of_birth: string
   category: PlayerCategory
