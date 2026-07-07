@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Players } from '@/types/database'
+import { Player } from '@/types/database'
 import { categoryColor, getAge, formatDate } from '@/lib/utils'
 import { Plus, Search, Filter, Users } from 'lucide-react'
 import PlayerCard from '@/components/cards/PlayerCard'
