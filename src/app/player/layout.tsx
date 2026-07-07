@@ -14,7 +14,7 @@ export default async function PlayerLayout({ children }: { children: React.React
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'player') redirect('/')
+  if (!profile || profile.role !== 'player') redirect('/')
 
   return (
     <div className="min-h-screen">

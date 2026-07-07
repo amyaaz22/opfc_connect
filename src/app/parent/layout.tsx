@@ -14,7 +14,7 @@ export default async function ParentLayout({ children }: { children: React.React
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'parent') redirect('/')
+  if (!profile || profile.role !== 'parent') redirect('/')
 
   return (
     <div className="min-h-screen">

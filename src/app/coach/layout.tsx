@@ -14,7 +14,7 @@ export default async function CoachLayout({ children }: { children: React.ReactN
     .eq('id', user.id)
     .single()
 
-  if (!['admin', 'coach'].includes(profile?.role)) redirect('/')
+  if (!profile || !['admin', 'coach'].includes(profile.role)) redirect('/')
 
   return (
     <div className="min-h-screen">
