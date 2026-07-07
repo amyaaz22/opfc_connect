@@ -72,7 +72,7 @@ export default function SessionDetailPage() {
   )
 
   const presentIds = new Set(attendance.filter(a => a.status === 'present').map(a => a.player_id))
-  const presentCount = [...presentIds].filter(id => allPlayers.find(p => p.id === id)).length
+const presentCount = allPlayers.filter(p => presentIds.has(p.id)).length
   const sessionPast = new Date(session.date) < new Date()
 
   return (
