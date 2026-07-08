@@ -23,8 +23,7 @@ export default function LoginPage() {
       return
     }
     toast.success('Welcome back!')
-    router.push('/')
-    router.refresh()
+    window.location.href = '/'
   }
 
   return (
