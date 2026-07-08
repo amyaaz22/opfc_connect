@@ -17,7 +17,7 @@ export interface Profile {
 
 export interface Player {
   id: string
-  profile_id?: string          // linked if the player has their own account
+  profile_id?: string
   player_code?: string
   full_name: string
   date_of_birth: string
@@ -122,7 +122,7 @@ export interface Announcement {
 }
 
 // View types (with joins)
-export interface PlayerWithDetails extends Player {
+export interface PlayerWithDetails extends Omit<Player, 'stats'> {
   guardian: Guardian
   stats: PlayerStats | null
   latest_payment: Payment | null
