@@ -1,29 +1,47 @@
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
 
 export default function LoginPage() {
-  const router = useRouter()
   const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setError('')
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+
     if (error) {
-      toast.error(error.message)
+      setError(error.message)
       setLoading(false)
       return
     }
-    toast.success('Welcome back!')
-    window.location.href = '/'
+
+    // Get role and redirect
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single()
+
+    const role = profile?.role
+    if (role === 'admin' || role === 'coach') {
+      window.location.replace('/coach')
+    } else if (role === 'parent') {
+      window.location.replace('/parent')
+    } else if (role === 'player') {
+      window.location.replace('/player')
+    } else {
+      window.location.replace('/coach')
+    }
   }
 
   return (
@@ -38,7 +56,6 @@ export default function LoginPage() {
           <p className="text-white/40 text-sm mt-1">Oasis Pailles Football Club</p>
         </div>
 
-        {/* Form */}
         <div className="card p-6 shadow-2xl">
           <h2 className="text-xl font-bold text-white mb-6">Sign In</h2>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -71,6 +88,13 @@ export default function LoginPage() {
                 >{showPass ? 'Hide' : 'Show'}</button>
               </div>
             </div>
+
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
             <button type="submit" className="btn-primary w-full mt-2" disabled={loading}>
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
@@ -85,7 +109,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Motto */}
         <p className="text-center text-white/20 text-xs mt-6 italic">Omnis Tactus, Officium</p>
       </div>
     </div>
