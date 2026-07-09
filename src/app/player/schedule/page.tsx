@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { MapPin, Clock, Calendar } from 'lucide-react'
 
 export default async function PlayerSchedulePage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 

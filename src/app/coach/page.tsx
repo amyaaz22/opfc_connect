@@ -5,7 +5,7 @@ import { formatDate } from '@/lib/utils'
 import { categoryColor } from '@/lib/utils'
 
 export default async function CoachDashboard() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const { data: profile } = await supabase.from('profiles').select('full_name, role').eq('id', user!.id).single()

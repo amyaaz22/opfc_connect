@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { CalendarDays, BarChart3, CreditCard, Megaphone, ChevronRight } from 'lucide-react'
 
 export default async function ParentDashboard() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user!.id).single()
 

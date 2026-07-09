@@ -5,7 +5,7 @@ import AttendanceChart from '@/components/charts/AttendanceChart'
 import { CheckCircle, XCircle, Clock } from 'lucide-react'
 
 export default async function PlayerAttendancePage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 

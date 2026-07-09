@@ -4,7 +4,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import MobileNav from '@/components/layout/MobileNav'
 
 export default async function CoachLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
@@ -14,15 +14,13 @@ export default async function CoachLayout({ children }: { children: React.ReactN
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['admin', 'coach'].includes(profile.role)) redirect('/')
+  if (!profile || !['admin', 'coach'].includes(profile.role)) redirect('/login')
 
   return (
     <div className="min-h-screen">
       <Sidebar role={profile.role} userName={profile.full_name}/>
       <MobileNav role={profile.role}/>
-      <main className="md:ml-64 pb-20 md:pb-0 min-h-screen">
-        {children}
-      </main>
+      <main className="md:ml-64 pb-20 md:pb-0 min-h-screen">{children}</main>
     </div>
   )
 }

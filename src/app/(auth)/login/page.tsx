@@ -1,11 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { toast } from 'react-hot-toast'
 import Link from 'next/link'
 
 export default function LoginPage() {
-  const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,40 +15,25 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const supabase = createClient()
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (error) {
-      setError(error.message)
+    if (signInError) {
+      setError(signInError.message)
       setLoading(false)
       return
     }
 
-    // Get role and redirect
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .single()
-
-    const role = profile?.role
-    if (role === 'admin' || role === 'coach') {
-      window.location.replace('/coach')
-    } else if (role === 'parent') {
-      window.location.replace('/parent')
-    } else if (role === 'player') {
-      window.location.replace('/player')
-    } else {
-      window.location.replace('/coach')
-    }
+    // Hard reload to root — server will read session and redirect to correct dashboard
+    window.location.href = '/'
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-navy-gradient">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-teal-400 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-400/30">
-            <span className="text-navy-900 font-black text-lg font-condensed">OPFC</span>
+            <span className="text-[#0D1B2A] font-black text-lg">OPFC</span>
           </div>
           <h1 className="text-3xl font-black font-condensed text-white tracking-wide">OPFC CONNECT</h1>
           <p className="text-white/40 text-sm mt-1">Oasis Pailles Football Club</p>
@@ -68,6 +51,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div>
@@ -75,17 +59,20 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'}
-                  className="input pr-12"
+                  className="input pr-16"
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors text-sm"
-                  onClick={() => setShowPass(!showPass)}
-                >{showPass ? 'Hide' : 'Show'}</button>
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 text-sm transition-colors"
+                  onClick={() => setShowPass(s => !s)}
+                >
+                  {showPass ? 'Hide' : 'Show'}
+                </button>
               </div>
             </div>
 
@@ -95,10 +82,16 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button type="submit" className="btn-primary w-full mt-2" disabled={loading}>
-              {loading ? 'Signing in…' : 'Sign In'}
+            <button type="submit" className="btn-primary w-full" disabled={loading}>
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-[#0D1B2A]/30 border-t-[#0D1B2A] rounded-full animate-spin"/>
+                  Signing in…
+                </span>
+              ) : 'Sign In'}
             </button>
           </form>
+
           <div className="mt-4 flex items-center justify-between text-sm">
             <Link href="/forgot-password" className="text-teal-400 hover:underline">
               Forgot password?

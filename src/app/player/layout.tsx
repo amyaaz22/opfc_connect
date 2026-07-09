@@ -4,7 +4,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import MobileNav from '@/components/layout/MobileNav'
 
 export default async function PlayerLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
@@ -14,7 +14,7 @@ export default async function PlayerLayout({ children }: { children: React.React
     .eq('id', user.id)
     .single()
 
-  if (!profile || profile.role !== 'player') redirect('/')
+  if (!profile || profile.role !== 'player') redirect('/login')
 
   return (
     <div className="min-h-screen">
